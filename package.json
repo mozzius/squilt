@@ -43,5 +43,8 @@
   },
   "files": [
     "lib/**/*"
-  ]
+  ],
+  "dependencies": {
+    "hotscript": "^1.0.10"
+  }
 }
