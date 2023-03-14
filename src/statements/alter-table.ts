@@ -70,6 +70,122 @@ export type ColumnDef = P.Do<
   ]
 >;
 
+export type ColumnConstraint = P.Do<
+  [
+    P.Optional<
+      P.Do<[P.Literal<"CONSTRAINT">, WS, P.Let<"constraint-name", P.Word>, WS]>
+    >,
+    P.OneOf<
+      [
+        // primary key (asc/desc)? conflict-cause autoincrement?
+        P.Do<
+          [
+            P.Literal<"PRIMARY">,
+            WS,
+            P.Literal<"KEY">,
+            WS,
+            P.Optional<P.Do<[P.Literal<"ASC"> | P.Literal<"DESC">, WS]>>,
+            ConflictCause,
+            P.Optional<P.Do<[P.Literal<"AUTOINCREMENT">, WS]>>
+          ]
+        >,
+        // not null conflict-cause
+        P.Do<[P.Literal<"NOT">, WS, P.Literal<"NULL">, ConflictCause]>,
+        // unique conflict-cause
+        P.Do<[P.Literal<"UNIQUE">, ConflictCause]>,
+        // check (expr)
+        P.Do<
+          [
+            P.Literal<"CHECK">,
+            WS,
+            P.Literal<"(">,
+            OptWS,
+            Expr,
+            OptWS,
+            P.Literal<")">
+          ]
+        >,
+        // default "(" expr ")" | literal-value | signed-number
+        P.Do<
+          [
+            P.Literal<"DEFAULT">,
+            WS,
+            P.OneOf<
+              [
+                P.Do<[P.Literal<"(">, OptWS, Expr, OptWS, P.Literal<")">]>,
+                LiteralValue,
+                SignedNumber
+              ]
+            >
+          ]
+        >,
+        // collate collation-name
+        P.Do<[P.Literal<"COLLATE">, WS, P.Let<"collation-name", P.Word>]>,
+        // foreign-key-clause
+
+        // INCOMPLETE
+
+        // (generated always)? as  "(" expr ")" (virtual | stored)
+        P.Do<
+          [
+            P.Optional<
+              P.Do<[P.Literal<"GENERATED">, WS, P.Literal<"ALWAYS">, WS]>
+            >,
+            P.Literal<"AS">,
+            WS,
+            P.Literal<"(">,
+            OptWS,
+            Expr,
+            OptWS,
+            P.Literal<")">,
+            WS,
+            P.Optional<P.OneOf<[P.Literal<"VIRTUAL">, P.Literal<"STORED">]>>
+          ]
+        >
+      ]
+    >
+  ]
+>;
+
+type ConflictCause = P.Optional<
+  P.Do<
+    [
+      P.Literal<"ON">,
+      WS,
+      P.Literal<"CONFLICT">,
+      WS,
+      P.OneOf<
+        [
+          P.Literal<"ROLLBACK">,
+          P.Literal<"ABORT">,
+          P.Literal<"FAIL">,
+          P.Literal<"IGNORE">,
+          P.Literal<"REPLACE">
+        ]
+      >,
+      WS
+    ]
+  >
+>;
 
 // INCOMPLETE
-export type TypeName = P.Let<"type-name", P.Word>;
+export type TypeName = P.Word;
+
+// INCOMPLETE
+export type Expr = P.Word;
+
+export type LiteralValue = P.OneOf<
+  [
+    P.Word,
+    P.Literal<"NULL">,
+    P.Literal<"TRUE">,
+    P.Literal<"FALSE">,
+    P.Literal<"CURRENT_TIME">,
+    P.Literal<"CURRENT_DATE">,
+    P.Literal<"CURRENT_TIMESTAMP">
+  ]
+>;
+
+export type SignedNumber = P.Do<
+  [P.Optional<P.Do<[P.Literal<"+" | "-">, WS]>>, P.Let<"number", P.Word>]
+>;

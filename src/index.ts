@@ -1,4 +1,10 @@
 import { AlterTableStmt } from "./statements/alter-table";
+import { AnalyzeStmt } from "./statements/analyze";
+import {
+  BeginStmt,
+  CommitStmt,
+  RollbackStmt,
+} from "./statements/transaction-control";
 import { VacuumStmt } from "./statements/vacuum";
 import { OptWS, WS } from "./utils";
 import { Parser as P, Call } from "./vendor/hotscript/dist";
@@ -18,10 +24,10 @@ type SqlStmt = P.Do<
     P.OneOf<
       [
         AlterTableStmt,
-        //   AnalyzeStmt,
+        AnalyzeStmt,
         //   AttachStmt,
-        //   BeginStmt,
-        //   CommitStmt,
+        BeginStmt,
+        CommitStmt,
         //   CreateIndexStmt,
         //   CreateTableStmt,
         //   CreateTriggerStmt,
@@ -38,7 +44,7 @@ type SqlStmt = P.Do<
         //   PragmaStmt,
         //   ReindexStmt,
         //   ReleaseStmt,
-        //   RollbackStmt,
+        RollbackStmt,
         //   SavepointStmt,
         //   SelectStmt,
         //   UpdateStmt,
