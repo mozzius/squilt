@@ -35,7 +35,7 @@ export type RollbackStmt = P.Do<
           P.Literal<"TO">,
           P.Optional<P.Do<[WS, P.Literal<"SAVEPOINT">]>>,
           WS,
-          P.Let<"savepoint-name", P.Word>
+          P.Word
         ]
       >
     >

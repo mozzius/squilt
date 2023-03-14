@@ -65,8 +65,8 @@ export type ColumnDef = P.Do<
   [
     P.Let<"column-name", P.Word>,
     WS,
-    P.Optional<P.Do<[TypeName, WS]>>
-    // column constraint
+    P.Optional<P.Do<[TypeName, WS]>>,
+    ColumnConstraint
   ]
 >;
 
